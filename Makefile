@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -D_Default_SOURCE -Ilib/include
+CFLAGS = -Wall -Wextra -D_Default_SOURCE -Ilib/include -Iinclude
 
 SRCDIR = src
 LIBDIR = lib
