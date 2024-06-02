@@ -166,6 +166,7 @@ int main()
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
     glfwTerminate();
+    printf("hello, world\n");
     return 0;
 }
 
