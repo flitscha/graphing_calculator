@@ -6,15 +6,11 @@ LIBDIR = lib
 OBJDIR = obj
 BINDIR = bin
 
-SRCS := $(wildcard $(SRCDIR)/**/*.c)
-SRCS += $(wildcard $(SRCDIR)/*.c)
-SRCS += $(wildcard $(LIBDIR)/**/*.c)
-SRCS += $(wildcard $(LIBDIR)/*.c)
+SRCS := $(wildcard $(SRCDIR)/**/*.c) $(wildcard $(SRCDIR)/*.c) $(wildcard $(LIBDIR)/**/*.c) $(wildcard $(LIBDIR)/*.c)
 
-OBJS := $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SRCS))
+OBJS := $(patsubst %.c,$(OBJDIR)/%.o,$(SRCS))
 
 TARGET = $(BINDIR)/graphing_calculator
-
 
 all: $(TARGET)
 
@@ -22,9 +18,8 @@ $(TARGET): $(OBJS)
 	@mkdir -p $(BINDIR)
 	$(CC) $(CFLAGS) $^ -o $@ -lglfw
 
-
-$(OBJDIR)/%.o: $(SRCDIR)/%.c
-	@mkdir -p $(OBJDIR)
+$(OBJDIR)/%.o: %.c
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
