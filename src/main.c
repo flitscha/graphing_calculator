@@ -23,29 +23,44 @@ int main() {
     unsigned int shaderProgram = create_shader_program(vertexShaderSource, fragmentShaderSource);
 
     // triangle-vertices
-    float vertices[] = {
-        -0.5f, -0.5f, 0.0f, // left  
-         0.5f, -0.5f, 0.0f, // right 
-         0.0f,  0.5f, 0.0f  // top   
+    float triangle_vertices[] = {
+        -0.5f, -0.5f, 0.0f,         1.0f, 0.0f, 0.0f, // left  
+         0.5f, -0.5f, 0.0f,         0.0f, 1.0f, 0.0f, // right 
+         0.0f,  0.5f, 0.0f,         0.0f, 0.0f, 1.0f, // top   
     }; 
 
     // setup vertex buffers and configure vertex attributes
-    unsigned int VBO, VAO;
-    setupVertexArray(&VAO, &VBO, vertices, sizeof(vertices));
+    unsigned int VBO_triangles, VAO_triangles;
+    setupVertexArray(&VAO_triangles, &VBO_triangles, triangle_vertices, sizeof(triangle_vertices));
+
+    // line vertices
+    float line_vertices[] = {
+        // First line
+        -0.5f, 0.0f, 0.0f,          1.0f, 0.5f, 0.0f,  
+        0.5f, 0.5f, 0.0f,           0.5f, 1.0f, 0.0f,
+        // Second line
+        -0.5f, 0.0f, 0.0f,          0.0f, 1.0f, 0.5f,
+        -0.5f, -0.5f, 0.0f,         0.0f, 0.5f, 1.0f,
+
+    };
+    unsigned int VBO_lines, VAO_lines;
+    setupVertexArray(&VAO_lines, &VBO_lines, line_vertices, sizeof(line_vertices));
 
     // render loop
     while (!glfwWindowShouldClose(window)) {
         process_input(window);
 
-        render(shaderProgram, VAO);
+        render(shaderProgram, VAO_triangles, VAO_lines, 1, 2);
  
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
     // cleanup
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
+    glDeleteVertexArrays(1, &VAO_triangles);
+    glDeleteVertexArrays(1, &VAO_lines);
+    glDeleteBuffers(1, &VBO_triangles);
+    glDeleteBuffers(1, &VBO_lines);
     glDeleteProgram(shaderProgram);
     glfwTerminate();
 
