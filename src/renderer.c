@@ -2,7 +2,7 @@
 #include <GLFW/glfw3.h>
 
 
-void setupVertexArray(unsigned int *VAO, unsigned int *VBO, float *vertices, size_t size) {
+void setupVertexArray(unsigned int* VAO, unsigned int* VBO, float* vertices, size_t size) {
     glGenVertexArrays(1, VAO);
     glGenBuffers(1, VBO);
 

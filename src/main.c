@@ -8,6 +8,7 @@
 #include "shader.h"
 #include "renderer.h"
 #include "input.h"
+#include "object_manager.h"
 
 
 // settings
@@ -22,18 +23,11 @@ int main() {
     // build and compile our shader program
     unsigned int shaderProgram = create_shader_program(vertexShaderSource, fragmentShaderSource);
 
-    // triangle-vertices
-    float triangle_vertices[] = {
-        -0.5f, -0.5f, 0.0f,         1.0f, 0.0f, 0.0f, // left  
-         0.5f, -0.5f, 0.0f,         0.0f, 1.0f, 0.0f, // right 
-         0.0f,  0.5f, 0.0f,         0.0f, 0.0f, 1.0f, // top   
-    }; 
-
     // setup vertex buffers and configure vertex attributes
-    unsigned int VBO_triangles, VAO_triangles;
-    setupVertexArray(&VAO_triangles, &VBO_triangles, triangle_vertices, sizeof(triangle_vertices));
+    //setupVertexArray(&VAO_triangles, &VBO_triangles, triangle_vertices, sizeof(triangle_vertices));
 
     // line vertices
+    /*
     float line_vertices[] = {
         // First line
         -0.5f, 0.0f, 0.0f,          1.0f, 0.5f, 0.0f,  
@@ -42,15 +36,43 @@ int main() {
         -0.5f, 0.0f, 0.0f,          0.0f, 1.0f, 0.5f,
         -0.5f, -0.5f, 0.0f,         0.0f, 0.5f, 1.0f,
 
+    };*/
+
+
+    // test the object manager
+    object_manager_t object_manager;
+    init_object_manager(&object_manager);
+
+
+    triangle_t t1 = {
+        {0.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f},
+        {1.0f, 0.0f, 0.0f}, 0
     };
+    triangle_t t2 = {
+        {-1.0f, -1.0f, 0.0f,} , {0.0f, -1.0f, 0.0f}, {-1.0f, 0.0f, 0.0f},
+        {0.0f, 1.0f, 0.0f}, 0
+    };
+    add_triangle(&object_manager, &t1);
+    add_triangle(&object_manager, &t2);
+
+    remove_triangle(&object_manager, &t1);
+    // next goal: add random triangle with space, delete a random triangle with 'd'
+    // and fix the segmentation fault in cut_line_storage()
+
+
+
+    unsigned int VBO_triangles, VAO_triangles;
     unsigned int VBO_lines, VAO_lines;
-    setupVertexArray(&VAO_lines, &VBO_lines, line_vertices, sizeof(line_vertices));
+    size_t num_triangles = object_manager.num_deleted_triangles + object_manager.num_visible_triangles;
+    size_t num_lines = object_manager.num_deleted_lines + object_manager.num_visible_lines;
+    setupVertexArray(&VAO_triangles, &VBO_triangles, object_manager.triangle_vertices, sizeof(float) * num_triangles * 18);
+    setupVertexArray(&VAO_lines, &VBO_lines, object_manager.line_vertices, sizeof(float) * num_lines * 12);
 
     // render loop
     while (!glfwWindowShouldClose(window)) {
         process_input(window);
 
-        render(shaderProgram, VAO_triangles, VAO_lines, 1, 2);
+        render(shaderProgram, VAO_triangles, VAO_lines, num_triangles, num_lines);
  
         glfwSwapBuffers(window);
         glfwPollEvents();
